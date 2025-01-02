@@ -1,0 +1,42 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getLatestById, getLatestLaunches } from "../../services/spacex";
+
+const { id } = Astro.params;
+// ? Sola para el servidor
+// if(!id) return Astro.redirect('/');
+
+// export const prerender = false; // ? Solo para el servidor: False, para indicarle que sea SSR
+
+let lauch: any;
+if(id){ lauch = await getLatestById({id}); }
+
+
+// AL ACTIVAR EL SERVER SIDE RENDERING YA NO ES NECESARIO EL SIGUIENTE CÓDIGO
+/*
+// ? Solo para páginas estáticas
+export async function getStaticPaths() {
+    // Se puede llamar a una API externa
+    // para saber todas la ids a generar
+
+    const launches = await getLatestLaunches();
+    return launches.map((launch) => ({ params: { id: launch.id } }));
+
+    // return [
+    //     { params: { id: '5eb87cd9ffd86e000604b32a' } },
+    //     { params: { id: '5eb87cdaffd86e000604b32b' } },
+    //     { params: { id: '5eb87cdbffd86e000604b32d' } },
+    // ]
+}
+*/
+
+---
+<Layout title="Launch">
+    <article class="flex gap-y-4 flex-col">
+        <img src={lauch.links.patch.small} alt={lauch.name} class="w-52 h-auto" />
+        <h2 class="text-4xl text-white text-bold ">
+            Lauch #{lauch?.flight_number}
+        </h2>
+        <p class="text-lg">{lauch.details}</p>
+    </article>
+</Layout>
